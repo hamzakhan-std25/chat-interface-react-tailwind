@@ -6,7 +6,6 @@
 
 :root {
 
-  
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
 
@@ -22,7 +21,7 @@
 @layer base {
   body {
     @apply bg-white text-gray-900;
-  }
+}
 }
 @layer components {
   .btn {
@@ -50,4 +49,3 @@
     @apply btn;
   }
 } */
-
