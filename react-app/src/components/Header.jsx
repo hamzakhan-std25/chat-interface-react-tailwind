@@ -1,7 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import { logout } from '../Services/authServices'
+import { useAuth } from '../contexts/authContext'
+import { logout } from '../Services/authServices';
 
 
 

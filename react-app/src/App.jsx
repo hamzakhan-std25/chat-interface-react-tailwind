@@ -3,6 +3,7 @@ import Home from "./pages/Home/Home";
 import Login from "./pages/Login/LogIn";
 import Signup from "./pages/Signup/SignUp";
 import Chat from "./pages/Chat/Chat";
+import About from "./pages/About/About"
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
             </PrivateRoute>
           } 
         />
+        <Route path="/about" element={<About /> } />
       </Routes>
     </Router>
   );
