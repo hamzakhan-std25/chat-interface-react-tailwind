@@ -9,15 +9,9 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
-    console.log('auth provide is called ..')
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-
-      console.log("current user is")
-      console.log(currentUser)
       setLoading(false);
-
     });
     return unsubscribe;
   }, []);
