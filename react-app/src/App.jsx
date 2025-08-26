@@ -6,8 +6,13 @@ import Chat from "./pages/Chat/Chat";
 import About from "./pages/About/About"
 import PrivateRoute from "./components/PrivateRoute";
 
+
+
 function App() {
   return (
+
+
+
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -24,6 +29,8 @@ function App() {
         <Route path="/about" element={<About /> } />
       </Routes>
     </Router>
+
+    
   );
 }
 
