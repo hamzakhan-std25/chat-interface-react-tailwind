@@ -22,7 +22,9 @@ const ChatPanel = () => {
   // WebSocket connection setup
   useEffect(() => {
     // Connect to your backend WebSocket server
-    ws.current = new WebSocket('ws://localhost:8080'); // Change to your backend URL
+    ws.current = new WebSocket('ws://chat-bot-production-b1e8.up.railway.app'); // Change to your backend URL
+
+    //chat-bot-production-b1e8.up.railway.app
 
     ws.current.onopen = () => {
       console.log('Connected to WebSocket server');
