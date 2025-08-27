@@ -12,6 +12,7 @@ app.use(express.json());
 app.get('/status', (req, res) => {
     
     console.log('status checking from client side...')
+    console.log('feature  branch backend ^^^^^')
 
     res.status(200).json({ status: "API is running..." })
 });
