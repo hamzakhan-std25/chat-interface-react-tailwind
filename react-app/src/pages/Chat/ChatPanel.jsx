@@ -22,8 +22,10 @@ const ChatPanel = () => {
   // WebSocket connection setup
   useEffect(() => {
     // Connect to your backend WebSocket server
-    ws.current = new WebSocket(import.meta.env.VITE_FIREBASE_API_KEY+import.meta.env.PORT); 
+    ws.current = new WebSocket(import.meta.env.VITE_BACKEND_WSS_URL+":"+import.meta.env.VITE_PORT); 
 
+    console.log('VITE_BACKEND_WSS_URL :',import.meta.env.VITE_BACKEND_WSS_URL);
+    console.log('PORT :',import.meta.env.VITE_PORT);
     //chat-bot-production-b1e8.up.railway.app
 
     ws.current.onopen = () => {
