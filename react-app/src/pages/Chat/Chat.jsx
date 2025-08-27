@@ -1,11 +1,12 @@
 import Header from "../../components/Header";
+import ChatPanel from "./ChatPanel";
 
 export default function Chat() {
   return (
-    <div>
+    <div className=" w-full grid  ">
       <Header />
-      <h2>Chatbot Page</h2>
-      {/* Your chatbot UI goes here */}
+      <ChatPanel />
+
     </div>
   );
 }
