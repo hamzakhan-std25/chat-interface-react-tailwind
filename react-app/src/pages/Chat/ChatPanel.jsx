@@ -21,13 +21,23 @@ const ChatPanel = () => {
 
   // WebSocket connection setup
   useEffect(() => {
+
+
+
+
+
     // Connect to your backend WebSocket server
     // ws.current = new WebSocket('ws://chat-bot-production-b1e8.up.railway.app'); // Change to your backend URL
-    ws.current = new WebSocket('ws://localhost:3000'); // 
-
-
+    // ws.current = new WebSocket('ws://localhost:3000'); // 
+    
+    // try to connect to ralway backend from local host 
+    ws.current = new WebSocket('wss://chat-bot-production-b1e8.up.railway.app/:8080'); // 
+    
     //chat-bot-production-b1e8.up.railway.app
 
+
+
+    
     ws.current.onopen = () => {
       console.log('Connected to WebSocket server');
       setIsConnected(true);
