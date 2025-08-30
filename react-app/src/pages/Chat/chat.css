@@ -1,0 +1,20 @@
+.bubble {
+  padding: 12px;
+  border-radius: 10px;
+  max-width: 70%;
+  white-space: pre-wrap;
+}
+
+.bubble ul {
+  margin: 0.5em 0;
+  padding-left: 1.2em;
+}
+
+.bubble li {
+  margin-bottom: 0.25em;
+}
+
+.bubble a {
+  color: #007bff;
+  text-decoration: underline;
+}

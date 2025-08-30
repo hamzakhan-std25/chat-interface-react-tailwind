@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import formateTime from '../../utilities/formateTime';
+import { useState, useRef, useEffect } from 'react';
+import ChatMessage from './ChatMessage';
 // import './ChatBot.css'
 
 const ChatPanel = () => {
@@ -7,7 +7,7 @@ const ChatPanel = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [userId] = useState(() => `user_${Math.random().toString(36).substr(2, 9)}`);
+  const userId = "221";
   const ws = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -39,42 +39,46 @@ const ChatPanel = () => {
 
     ws.current.onopen = () => {
       console.log('Connected to WebSocket server');
-      setIsConnected(true);
-      //   addMessage('System', 'Connected to chat server!', 'system');
+      setIsConnected(true)
+      // addMessage({sender: 'System', chunk: 'Connected to chat server !', type:'system', isCompleted : true, timestamp : Date.now()})
     };
 
     ws.current.onmessage = (event) => {
 
       try {
+
         const data = JSON.parse(event.data);
-        console.log(data);
 
-        if (data.type === 'ai') {
-          addMessage('Assistant', data.message, 'ai');
+        if (data.type == 'message_chunk' || data.type == 'message_complete') {
+          setIsLoading(false)
 
-        } else if (data.type === 'error') {
-          addMessage('System', data.message, 'error');
+          console.log('message-chunk is recived------------------');
+          console.log(data)
+
+          addMessage(data);
+
+
         }
 
       } catch (error) {
         console.error('Error parsing message:', error);
-        addMessage('System', 'Error: Please Check the console', 'error');
+        addMessage({ sender: 'System', chunk: 'Error: Please Check the console', type: 'error', isCompleted: true, timestamp: new Date().toISOString() });
       }
-
-      setIsLoading(false)
 
     };
 
     ws.current.onclose = () => {
       console.log('Disconnected from WebSocket server');
       setIsConnected(false);
-      //   addMessage('System', 'Disconnected from server. Trying to reconnect...', 'system');
+
+      // addMessage({sender: 'System', chunk: 'Disconnected from server. Trying to reconnect...', type:'system', isCompleted : true, timestamp : Date.now()});
     };
 
 
     ws.current.onerror = (error) => {
       console.error('WebSocket error:', error);
-      //   addMessage('System', 'Connection error occurred', 'error');
+      // addMessage({sender: 'System', chunk: 'Connection error occurred', type:'error', isCompleted : true, timestamp : Date.now()});
+
     };
 
     // Cleanup on component unmount
@@ -83,39 +87,72 @@ const ChatPanel = () => {
         ws.current.close();
       }
     };
+
   }, []);
 
-  const addMessage = (sender, text, type = 'user') => {
-    const newMessage = {
-      id: Date.now(),
-      sender,
-      text,
-      type, // 'user', 'assistant', 'system', 'error'
-      timestamp: new Date().toLocaleTimeString()
-    };
+  const addMessage = (data) => {
 
-    setMessages(prev => [...prev, newMessage]);
+    
+    
+    setMessages((prev) => {
+      
+      if (prev.length == 0 || prev[prev.length - 1].isCompleted) {
+        
+        return [...prev, {
+          id: new Date().toISOString(),
+          sender: data.sender || 'Assistant',
+          text: data.chunk,
+          isCompleted: data.isCompleted,
+          type: data.type,
+          timestamp: data.timestamp
+        }]
+        
+        
+      }
+      
+      
+      else {
+        const last = prev[prev.length - 1];
+        let updatedlast;
+
+      if(data.type== "message_complete"){
+       updatedlast = { ...last, text:data.message, isCompleted: true,}
+      }
+      else{
+         updatedlast = { ...last, text: last.text+data.chunk}
+      }
+        return [...prev.slice(0, -1), updatedlast];
+      }
+
+
+
+    });
   };
 
   const sendMessage = () => {
+
     if (inputMessage.trim() && ws.current && isConnected && !isLoading) {
       // Create message object
       const messageData = {
+        type: 'message',
         message: inputMessage.trim(),
-        userId: userId
+        userId: userId,
       };
 
 
 
+
       // Send message through WebSocket
-      setIsLoading(true);
       ws.current.send(JSON.stringify(messageData));
 
       // Add message to local state immediately for instant feedback
       addMessage(
-        'You', inputMessage.trim(), 'user'
-      );
+        { sender: 'You', chunk: inputMessage.trim(), type: 'user', isCompleted: true, timestamp: new Date().toISOString()}
 
+
+        
+      );
+      setIsLoading(true)
       // Clear input field
       setInputMessage('');
     }
@@ -135,21 +172,7 @@ const ChatPanel = () => {
     }
   };
 
-  // Helper function to get message styling based on type
-  const getMessageStyles = (type) => {
-    switch (type) {
-      case 'user':
-        return 'bg-blue-400 text-white ml-8 border-br-4';
-      case 'ai':
-        return 'bg-white text-gray-800 border border-gray-200 mr-8 border-bl-4';
-      case 'system':
-        return 'bg-gray-100 text-gray-600 italic text-center mx-4';
-      case 'error':
-        return 'bg-red-50 text-red-600 italic text-center mx-4';
-      default:
-        return 'bg-white text-gray-800 border border-gray-200';
-    }
-  };
+
 
   return (
 
@@ -183,19 +206,7 @@ const ChatPanel = () => {
         ) : (
           <div className="space-y-3">
             {messages.map((message) => (
-              <div
-                key={message.id}
-                className={` ${getMessageStyles(message.type)} p-3 rounded-lg `
-                }
-              >
-                <div className="flex justify-between items-center mb-1">
-                  <span className="font-semibold text-gray-700 text-sm">{message.sender}</span>
-                  <span className="text-gray-800 text-xs">{formateTime(message.timestamp)}</span>
-                </div>
-                <div className="text-sm leading-relaxed">
-                  {message.text}
-                </div>
-              </div>
+              <ChatMessage key={message.id}  message={message}/>
             ))}
           </div>
         )}
