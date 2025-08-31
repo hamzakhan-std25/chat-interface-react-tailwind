@@ -6,6 +6,9 @@ app.use(express.json());
 // const apiRoutes = require('./routes/api')
 // app.use('/api',apiRoutes);
 
+const chatRoutes= require('./routes/Chats.js')
+app.use('/chats', chatRoutes);
+
 
 
 
@@ -16,11 +19,7 @@ app.get('/status', (req, res) => {
     res.status(200).json({ status: "API is running..." })
 });
 
-app.post('/data', (req, res) => {
-    
-    console.log('data is send through post request to path /data')
-    res.status(200).json({ message: "data recievd! Soon we will redirect routes" })
-})
+
 
 
 app.use('/', (req, res) => {

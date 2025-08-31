@@ -1,0 +1,13 @@
+.bubble {
+  border-radius: 10px;
+  white-space: pre-wrap;
+}
+
+.bubble ul {
+  padding-left: 1rem;
+}
+
+.bubble a {
+  color: #007bff;
+  text-decoration: underline;
+}
