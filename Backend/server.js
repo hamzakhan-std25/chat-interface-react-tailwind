@@ -1,7 +1,8 @@
 const app = require('./app')
 const http = require('http')
 const configureWebsockets = require('./websockets')
-const PORT= 8080; 
+require('dotenv').config();
+const PORT= process.env.PORT; 
 
 
 const server = http.createServer(app);
