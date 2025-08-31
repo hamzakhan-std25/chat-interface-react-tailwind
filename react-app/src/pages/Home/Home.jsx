@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom'
+import { speak } from '../../utils/speak'
 
 export default function Home() {
+
+
+
   return (
     <div className=' bg-stone-300 p-8  text-center mb-4'>
       <h1 className='text-2xl font-bold text-cyan-600 shadow p-4 bg-cy'>Welcome to my Chat Bot website...</h1>

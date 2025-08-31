@@ -1,5 +1,5 @@
 
-import formateTime from '../../utilities/formateTime';
+import formateTime from '../../utils/formateTime';
 import ReactMarkdown from 'react-markdown'
 import './chat.css'
 
