@@ -7,8 +7,6 @@ import About from "./pages/About/About"
 import PrivateRoute from "./components/PrivateRoute";
 
 
-
-
 function App() {
   return (
 
