@@ -65,7 +65,7 @@ export default function ChatMessage({ message, speak, changeMode, setText }) {
                         <ReactMarkdown>
                             {message.text}
                         </ReactMarkdown>
-                        : <audio className=' inline-block' controls src={message.url}></audio>
+                        : <audio className='w-full  sm:w-sm inline-block' controls src={message.url}></audio>
                 }
                 <div className='flex items-center pt-2 gap-2 [&>*]:cursor-pointer'>{message.isCompleted ? <> {message.text && <FiCopy onClick={() => handleCopy(message.text)} />}  <FiThumbsUp onClick={() => handleThumbsUp(message.id)} /> <FiThumbsDown onClick={() => handleThumbsDown(message.id)} /> {message.text && <FiVolume2 onClick={() => speakText(message.text)} />} </> : <FiLoader />} </div>
             </div>

@@ -232,7 +232,7 @@ const ChatPanel = () => {
     <>
       <div className="flex flex-col h-screen mx-auto w-full border border-gray-200 overflow-hidden bg-white shadow-lg">
         {/* Chat Header */}
-        <div className="px-2 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex justify-between items-center h-20">
+        <div className="px-2 pl-4 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex justify-between items-center h-20">
           <h3 className="text-lg font-semibold">Chat with Gemini</h3>
           <div className="flex items-center gap-2 mr-2">
             <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400 ring-2 ring-green-400/30' : 'bg-red-400 ring-2 ring-red-400/30'}`}></span>
