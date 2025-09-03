@@ -1,15 +1,11 @@
-import Header from "../../components/Header";
-// import ChatBotStr from "./ChatBotStr";
+import Header from "../../components/Header"
 import ChatPanel from "./ChatPanel";
-// import ChatBot from "./ChatBot";
 
 export default function Chat() {
   return (
-    <div className=" w-full grid  ">
+    <div className=".fullscreen w-full">
       <Header />
       <ChatPanel />
-        {/* <ChatBot /> */}
-        {/* <ChatBotStr /> */}
 
     </div>
   );

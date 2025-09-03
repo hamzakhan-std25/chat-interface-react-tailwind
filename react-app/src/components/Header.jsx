@@ -16,7 +16,7 @@ export default function Header() {
             <FiMenu
                 onClick={() => setSideIn(true)}
 
-                className={`fixed text- bg-blue-200 text-5xl rounded-2xl m-2 p-2 hover:scale-110 transition-all cursor-pointer`} />
+                className={`fixed text- bg-blue-200 text-5xl rounded-2xl m-2 p-2 hover:scale-110 transition-all cursor-pointer opacity-30 hover:opacity-100`} />
 
 
             <div className={`max-w-[300px] shadow  bg-blue-100 flex flex-col justify-between items-center  h-screen fixed top-0 z-50 transition-all  ${sideIn ? "left-0 " : "-left-full"}  `}>
