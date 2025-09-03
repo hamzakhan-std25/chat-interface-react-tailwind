@@ -36,9 +36,8 @@ const ChatPanel = () => {
   // WebSocket connection setup
   useEffect(() => {
 
-    // ws.current = new WebSocket('wss://chat-bot-production-b1e8.up.railway.app/:8080');
-    ws.current = new WebSocket('ws://localhost:8080');
-
+    ws.current = new WebSocket('wss://chat-bot-production-b1e8.up.railway.app/:8080');
+    // ws.current = new WebSocket('ws://localhost:8080');
 
 
 

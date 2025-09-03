@@ -142,8 +142,8 @@ export default function VoiceRecorderModal({ isOpen, mode = "record", onClose, o
 
                   {<>
                     <button
-                      onClick={!isSpeaking ? startSpeech : isPaused ? resumeSpeaking : pauseSpeaking}
-                      className="w-20 h-20 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center shadow-lg transition"
+                      onClick={!isSpeaking ? startSpeech : (isPaused ? resumeSpeaking : pauseSpeaking)}
+                      className={`w-20 h-20 rounded-full  flex items-center justify-center shadow-lg transition ${!isPaused ? "bg-green-500 hover:bg-green-600":"bg-blue-500 hover:bg-blue-600"} `}
                     >
                       {isPaused ? <Pause size={36} color="white" /> : <Play size={36} color="white" />}
                     </button>
