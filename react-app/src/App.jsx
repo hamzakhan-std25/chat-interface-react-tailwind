@@ -10,7 +10,7 @@ import PrivateRoute from "./components/PrivateRoute";
 function App() {
   return (
 
-
+    // <About />
 
     <Router>
       <Routes>
@@ -29,7 +29,7 @@ function App() {
       </Routes>
     </Router>
 
-    
+
   );
 }
 

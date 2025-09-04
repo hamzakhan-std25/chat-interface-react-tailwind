@@ -28,6 +28,10 @@ build
 dist
 dist-ssr
 *.local
+whisper.cpp
+temp-*
+uploads
+
 
 # Editor directories and files
 .vscode/*

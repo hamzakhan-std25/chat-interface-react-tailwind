@@ -1,9 +1,10 @@
 
-import formateTime from '../../utilities/formateTime';
+import formateTime from '../../utils/formateTime';
 import ReactMarkdown from 'react-markdown'
 import './chat.css'
+import { FiCopy, FiHeadphones, FiLoader, FiSpeaker, FiThumbsDown, FiThumbsUp, FiVolume2 } from 'react-icons/fi';
 
-export default function ChatMessage({ message }) {
+export default function ChatMessage({ message, speak, changeMode, setText }) {
 
 
     // Helper function to get message styling based on type
@@ -22,6 +23,31 @@ export default function ChatMessage({ message }) {
         }
     };
 
+    const handleCopy = async (text) => {
+
+        try {
+            await navigator.clipboard.writeText(text);
+            alert('Copied!');
+        } catch (err) {
+            alert('Failed to copy!');
+            console.error('Failed to copy text: ', err);
+        }
+
+    }
+    const handleThumbsUp = (id) => {
+        console.log("thumbsUp click on chat that have id :", id);
+    }
+    const handleThumbsDown = (id) => {
+        console.log("thumbsDown click on chat that have id :", id);
+    }
+
+    const speakText = (text) => {
+        changeMode();
+        setText(text);
+        speak();
+    };
+
+
 
     return (
         <div
@@ -34,11 +60,17 @@ export default function ChatMessage({ message }) {
                 <span className="text-gray-800 text-xs">{formateTime(message.timestamp)}</span>
             </div>
             <div className="text-sm leading-relaxed bubble">
-                <ReactMarkdown>
-                    {message.text}
-
-                </ReactMarkdown>
+                {
+                    message.text ?
+                        <ReactMarkdown>
+                            {message.text}
+                        </ReactMarkdown>
+                        : <audio className='w-full  sm:w-sm inline-block' controls src={message.url}></audio>
+                }
+                <div className='flex items-center pt-2 gap-2 [&>*]:cursor-pointer'>{message.isCompleted ? <> {message.text && <FiCopy onClick={() => handleCopy(message.text)} />}  <FiThumbsUp onClick={() => handleThumbsUp(message.id)} /> <FiThumbsDown onClick={() => handleThumbsDown(message.id)} /> {message.text && <FiVolume2 onClick={() => speakText(message.text)} />} </> : <FiLoader />} </div>
             </div>
+
         </div>
     )
 }
+

@@ -11,3 +11,8 @@
   color: #007bff;
   text-decoration: underline;
 }
+.fullscreen {
+  height: 100vh;     /* fallback */
+  height: 100dvh;    /* modern browsers */
+  height: var(--app-height); /* JS fallback */
+}

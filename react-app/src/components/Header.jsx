@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/authContext'
 import { logout } from '../Services/authServices';
-import { FiArrowLeft, FiMenu } from 'react-icons/fi'
+import { FiArrowLeft, FiArrowRight, FiMenu } from 'react-icons/fi'
 
 
 
@@ -13,21 +13,27 @@ export default function Header() {
     const { user } = useAuth();
     return (
         <>
-            <FiMenu
+            <span
                 onClick={() => setSideIn(true)}
 
-                className={`fixed text- bg-blue-200 text-5xl rounded-2xl m-2 p-2 hover:scale-110 transition-all cursor-pointer`} />
+                className={`fixed h-20 -left-2 w-4 rounded-2xl float-end  flex justify-center items-center bg-blue-200  hover:left-0 transition-all cursor-pointer`} >
+                &gt;
+            </span>
 
 
             <div className={`max-w-[300px] shadow  bg-blue-100 flex flex-col justify-between items-center  h-screen fixed top-0 z-50 transition-all  ${sideIn ? "left-0 " : "-left-full"}  `}>
 
                 <div className='m-2'>
-                    <div className='flex items-center justify-center'> 
+                    <div className='flex items-center justify-center'>
 
-                        {
-                            sideIn &&  <FiArrowLeft onClick={()=>{setSideIn(!sideIn)}}
-                            className='text-4xl p-2 bg-gray-300 rounded-2xl fixed left-0 hover:scale-110 transition-all' />
-                        }
+
+                        {sideIn && <span
+                            onClick={() => setSideIn(false)}
+
+                            className={`fixed h-20 -left-2 w-4 rounded-2xl float-end  flex justify-center items-center bg-blue-200  hover:left-0 transition-all cursor-pointer`} >
+                            &lt;
+                        </span>}
+                            
                         <h1 className=' text-violet-400 font-bold text-xl p-4 '>Chat-Bot</h1></div>
                     <p className=' capitalize text-stone-800 font-semibold'>enjoy to chat with ai</p>
                 </div>
