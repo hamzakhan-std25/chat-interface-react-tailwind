@@ -68,7 +68,7 @@ const ChatPanel = () => {
             // setIsLoading(true)
             setMessages((prev) => {
               const last = prev[prev.length - 1];
-              const updatedlast = { ...last, isCompleted: true, url :data.url}
+              const updatedlast = { ...last, isCompleted: true, url: data.url }
               return [...prev.slice(0, -1), updatedlast];
             })
 
@@ -183,14 +183,16 @@ const ChatPanel = () => {
 
 
   const sendVoice = async (blob) => {
+    setIsLoading(true)
 
+    const url = URL.createObjectURL(blob)
     // First add voice to sending msg instantly 
-    addMessage({ sender: 'You', type: 'user', isCompleted: true, timestamp: new Date().toISOString() });
+    addMessage({ sender: 'You', type: 'user', url: url, isCompleted: true, timestamp: new Date().toISOString() });
 
     // create binary data
     const arrayBuffer = await blob.arrayBuffer();
     const sizeInKB = (arrayBuffer.byteLength / 1024).toFixed(2);
-    
+
     // Send binary on websocket
     ws.current.send(arrayBuffer);
     console.log(`Audio sent: ${arrayBuffer.byteLength} bytes! : (${sizeInKB} KB) ✅`);
@@ -220,9 +222,9 @@ const ChatPanel = () => {
 
 
 
-  const openRecording = ()=>{
+  const openRecording = () => {
     setMode('record')
-     setIsRecording(true) 
+    setIsRecording(true)
   }
 
 
@@ -233,7 +235,7 @@ const ChatPanel = () => {
       <div className="flex flex-col h-screen mx-auto w-full border border-gray-200 overflow-hidden bg-white shadow-lg">
         {/* Chat Header */}
         <div className="px-2 pl-4 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex justify-between items-center h-20">
-          <h3 className="text-lg font-semibold">Chat with Gemini</h3>
+          <h3 className="text-lg font-semibold px-2">Chat with Gemini</h3>
           <div className="flex items-center gap-2 mr-2">
             <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400 ring-2 ring-green-400/30' : 'bg-red-400 ring-2 ring-red-400/30'}`}></span>
             <span className="text-sm">{isConnected ? 'Connected' : 'Disconnected'}</span>
@@ -258,7 +260,7 @@ const ChatPanel = () => {
           ) : (
             <div className="space-y-3">
               {messages.map((message) => (
-                <ChatMessage key={message.id} message={message} speak={()=>setIsRecording(true)} changeMode={()=>setMode('speech')} setText ={(txt)=> setTextToSpeech(txt)}  />
+                <ChatMessage key={message.id} message={message} speak={() => setIsRecording(true)} changeMode={() => setMode('speech')} setText={(txt) => setTextToSpeech(txt)} />
               ))}
             </div>
           )}

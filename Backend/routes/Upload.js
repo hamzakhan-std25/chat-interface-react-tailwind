@@ -1,9 +1,6 @@
 const express = require('express')
 const multer = require('multer');
 const fs = require('fs')
-const path = require('path')
-const speech = require('@google-cloud/speech');
-const { buffer } = require('stream/consumers');
 const cloudinary = require('cloudinary').v2;
 require('dotenv').config();
 
@@ -71,10 +68,7 @@ router.post("/transcribe", upload.single("audio"), async (req, res) => {
     const audioBuffer = req.body;
 
     console.log("Received buffer length:", audioBuffer.length);
-    console.log(buffer);
-
-
-    res.json({ text: "buffer is checking " });
+    res.json({ text: "buffer is Transcibing... " });
 
 
   } catch (err) {

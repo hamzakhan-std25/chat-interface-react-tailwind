@@ -30,7 +30,8 @@ export default function Signup() {
           <input className="text-lg bg-stone-300 p-2 rounded" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
           <input className="text-lg bg-stone-300 p-2 rounded" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <p className="p-2">I have already an account! <Link to="/login"><span className="text-blue-500 cursor-pointer hover:text-blue-800 transition">Log In</span></Link></p>
-          <button className=" cursor-pointer self-center shadow p-2 px-4 rounded-2xl bg-blue-300 w-40 hover:bg-blue-400 transition-colors font-semibold" type="submit">Sign Up</button>
+          <button className=" cursor-pointer self-center shadow p-2 px-4 rounded-2xl bg-blue-300 w-40 hover:bg-blue-400  font-semibold transition-all duration-200
+        hover:shadow-lg hover:-translate-y-0.5" type="submit">Sign Up</button>
 
         </form>
       </div>

@@ -42,19 +42,17 @@ function configureWebsockets(server) {
                 if (isbinary) {
 
                     
-                    
                     // Create message object
                     const data = {
                         type: 'message',
                         message: "reply back :-- i am sorry i can't access your voice content. please try to communicate in chat--",
                         userId: 333333,
                     };
-                    await handleUserMessage(sessionId, data, chatHistory),
-
+                    //send to gemini for voice reply
+                    await handleUserMessage(sessionId, data, chatHistory)
                     
                     console.log('voice message is deliver form client ')
-                    await handleUserVoice(sessionId, message, chatHistory); // the message is buffer of voice 
-
+                    await handleUserVoice(sessionId, message, chatHistory); // the message is buffer of voice   
                 }
                 else {
                     const data = JSON.parse(message);
@@ -178,8 +176,8 @@ function configureWebsockets(server) {
         console.log('Received audio data:', {
             size: buffer.length,
             bytes: buffer.length,
-
         });
+
 
         // 1. Save the buffer to temp file
         const tempPath = `./temp-${Date.now()}.webm`;
@@ -193,19 +191,23 @@ function configureWebsockets(server) {
             form.append("audio", fs.createReadStream(tempPath));
 
             // 3. Call your existing /upload route
-            const response = await axios.post("http://localhost:8080/upload", form, {
-                //todo: need to change url
+            const response = await axios.post("https://chat-bot-production-b1e8.up.railway.app/upload", form, {
                 headers: form.getHeaders(),
             });
 
+
             // 4. Get URL from response and text from speech
-            const { url } = response.data;
+            const url = "thire is no url";
+            // const { url } = response.data;
             console.log('URL index > configurew.. > hanleUserVoice :', url)
 
             // todo: before sending back url 
             // todo: need to call speech to text 
             // todo: and forward to handleUserMessage
 
+
+            // 4. Cleanup temp file
+            fs.unlinkSync(tempPath);
 
             // 5. Send URL back to WebSocket client
             ws.send(JSON.stringify({ type: "audio_url", url, message: "text from speech will be provided as soon as posible" }));
@@ -214,9 +216,6 @@ function configureWebsockets(server) {
         } catch (error) {
             console.error("Error transcribing:", error.response?.data || error.message);
             throw error;
-        } finally {
-            // 4. Cleanup temp file
-            fs.unlinkSync(tempPath);
         }
 
     }
