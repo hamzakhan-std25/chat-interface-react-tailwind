@@ -31,6 +31,8 @@ dist-ssr
 whisper.cpp
 temp-*
 uploads
+whisper
+
 
 
 # Editor directories and files
