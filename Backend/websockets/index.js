@@ -4,6 +4,8 @@ const axios = require('axios')
 const FormData = require('form-data')
 require('dotenv').config()
 const GeminiService = require('../services/geminiService');
+const { saveMessage, getMessages } = require('../services/chatService');
+const { v4: uuidv4 } = require("uuid");
 
 
 
@@ -18,12 +20,9 @@ function configureWebsockets(server) {
     wss.on('connection', (ws) => {
         console.log("➕ client connected");
 
-
-
-        const sessionId = Date.now().toString();
+        const sessionId = uuidv4();
         const chatHistory = [];
         console.log('created sesison id :', sessionId)
-
 
 
         userSessions.set(sessionId, {
@@ -34,14 +33,19 @@ function configureWebsockets(server) {
 
 
 
+
+
         ws.on('message', async (message, isbinary) => {
 
 
 
             try {
+
+
+
                 if (isbinary) {
 
-                    
+
                     // Create message object
                     const data = {
                         type: 'message',
@@ -50,7 +54,7 @@ function configureWebsockets(server) {
                     };
                     //send to gemini for voice reply
                     await handleUserMessage(sessionId, data, chatHistory)
-                    
+
                     console.log('voice message is deliver form client ')
                     await handleUserVoice(sessionId, message, chatHistory); // the message is buffer of voice   
                 }
@@ -59,6 +63,10 @@ function configureWebsockets(server) {
 
                     if (data.type === 'message') {
                         await handleUserMessage(sessionId, data, chatHistory);
+                    }
+                    if (data.type === 'init') {
+                        
+
                     }
 
                     if (data.type === 'clear_history') {
@@ -97,13 +105,28 @@ function configureWebsockets(server) {
         const { ws } = session;
         const userMessage = data.message;
 
+
         try {
-            console.log('New msg : ', data.message)
-            // Add user message to history
+            // Add user msg and update chathistory
             chatHistory.push({
                 role: 'user',
                 parts: [{ text: userMessage }]
             });
+
+
+            // add new message in database
+
+            const newMessage = await saveMessage({
+                user_id: data.userId,
+                user_name: "NA",
+                session_id: sessionId,
+                role: "user",
+                message_text: userMessage
+            });
+
+
+            console.log("Saved:", newMessage);
+
 
             // // Send typing indicator
             // ws.send(JSON.stringify({
@@ -127,12 +150,25 @@ function configureWebsockets(server) {
                     }));
                 },
                 // onComplete callback
-                (fullResponse) => {
+                async (fullResponse) => {
                     // Add AI response to history
                     chatHistory.push({
                         role: 'model',
                         parts: [{ text: fullResponse }]
                     });
+
+                    //add ai respose to database
+                    const newMessage = await saveMessage({
+                        user_id: data.userId,
+                        user_name: "NA",
+                        session_id: sessionId,
+                        role: "ai",
+                        message_text: fullResponse
+                    });
+
+
+                    console.log("Saved:", newMessage);
+
 
                     ws.send(JSON.stringify({
                         type: 'message_complete',
