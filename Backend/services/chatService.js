@@ -1,15 +1,15 @@
-const supabase = require( "./supabaseClient.js");
+const supabase = require("./supabaseClient.js");
 
- async function saveMessage({ user_id, user_name, session_id, role, message_text, url = null }) {
+async function saveMessage({ user_id, user_name, session_id, role, message_text, url = null }) {
   const { data, error } = await supabase
     .from("messages")
-    .insert([{ 
-      user_id, 
-      user_name, 
-      session_id, 
-      role, 
-      message_text, 
-      url 
+    .insert([{
+      user_id,
+      user_name,
+      session_id,
+      role,
+      message_text,
+      url
     }])
     .select()
     .single();
@@ -24,7 +24,7 @@ const supabase = require( "./supabaseClient.js");
 
 
 
- async function getMessages(session_id) {
+async function getMessages(session_id) {
   const { data, error } = await supabase
     .from("messages")
     .select("*")
@@ -39,4 +39,21 @@ const supabase = require( "./supabaseClient.js");
   return data;
 }
 
-module.exports = {saveMessage, getMessages}
+
+async function getSessions(user_id) {
+ 
+    const { data, error } = await supabase
+    .rpc("get_user_sessions", { p_user_id: user_id });
+
+  if (error) {
+    console.error("Error fetching sessions:", error);
+    return [];
+  }
+  return data;
+}
+
+
+
+
+
+module.exports = { saveMessage, getMessages, getSessions }

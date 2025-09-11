@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { saveMessage, getMessages } = require('../services/chatService')
+const { saveMessage, getMessages, getSessions } = require('../services/chatService')
 // Define routes on the router object
 router.get('/', (req, res) => {
   res.status(200).json({ massage: 'chats are not available' });
@@ -29,6 +29,15 @@ router.post('/addMessage', async (req, res) => {
 
   res.status(200).json({ massage: "save message in database  :", newMessage });
 });
+
+
+// Define routes on the router object
+router.get('/sessions/:id', async (req, res) => {
+  const userId = req.params.id;
+  const response = await getSessions(userId);
+  res.status(200).json({ massage: "response from getMessages and id :", response });
+});
+
 
 
 

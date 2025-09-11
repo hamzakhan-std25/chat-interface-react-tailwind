@@ -6,6 +6,10 @@ require('dotenv').config()
 const GeminiService = require('../services/geminiService');
 const { saveMessage, getMessages } = require('../services/chatService');
 const { v4: uuidv4 } = require("uuid");
+const MAX_HISTORY = 20;
+let userId;
+
+
 
 
 
@@ -17,65 +21,95 @@ function configureWebsockets(server) {
 
     const userSessions = new Map();
 
+
+
+    function logActiveSessions() {
+        console.log("===== Active Sessions =====");
+        for (const [sessionId, session] of userSessions.entries()) {
+            console.log(`Session: ${sessionId}`);
+            console.log(` - IsProcessing: ${session.isProcessing}`);
+            console.log(` - Messages in memory: ${session.chatHistory.length}`);
+            console.log(` - WebSocket open: ${session.ws.readyState === 1}`);
+        }
+        console.log("===========================");
+    }
+
+
+
+
+
     wss.on('connection', (ws) => {
         console.log("➕ client connected");
-
-        const sessionId = uuidv4();
-        const chatHistory = [];
-        console.log('created sesison id :', sessionId)
-
-
-        userSessions.set(sessionId, {
-            ws,
-            chatHistory,
-            isProcessing: false
-        });
-
-
+        logActiveSessions();
+        let sessionId;
+        let chatHistory = [];
 
 
 
         ws.on('message', async (message, isbinary) => {
-
-
-
             try {
-
-
-
                 if (isbinary) {
 
-
-                    // Create message object
-                    const data = {
-                        type: 'message',
-                        message: "reply back :-- i am sorry i can't access your voice content. please try to communicate in chat--",
-                        userId: 333333,
-                    };
-                    //send to gemini for voice reply
-                    await handleUserMessage(sessionId, data, chatHistory)
-
                     console.log('voice message is deliver form client ')
-                    await handleUserVoice(sessionId, message, chatHistory); // the message is buffer of voice   
+                    await handleUserVoice(sessionId, message, chatHistory); // the message is buffer of voice 
+
+
+
+                    return
                 }
-                else {
-                    const data = JSON.parse(message);
 
-                    if (data.type === 'message') {
-                        await handleUserMessage(sessionId, data, chatHistory);
-                    }
-                    if (data.type === 'init') {
-                        
+                const data = JSON.parse(message);
 
+
+                // --- init handshake ---
+                if (data.type === "init") {
+                    console.log('init send:', data.sessionId)
+                    userId = data.userId || 'anonymous';
+                    sessionId = data.sessionId;
+
+                    if (sessionId && userSessions.has(sessionId)) {
+                        // Reuse existing session
+                        ws.sessionId = sessionId;
+                        userSessions.get(sessionId).ws = ws;
+                        console.log("🔄 Rejoined session:", sessionId);
+                    } else {
+                        // Create new session
+                        sessionId = uuidv4();
+                        ws.sessionId = sessionId;
+                        userSessions.set(sessionId, {
+                            ws,
+                            chatHistory,
+                            isProcessing: false
+                        });
+                        console.log("🆕 Created session:", sessionId);
                     }
 
-                    if (data.type === 'clear_history') {
-                        chatHistory.length = 0;
-                        ws.send(JSON.stringify({
-                            type: 'history_cleared',
-                            message: 'Chat history cleared'
-                        }));
-                    }
+                    // Reply to client with active sessionId
+                    ws.send(JSON.stringify({
+                        type: "session_ready",
+                        sessionId
+                    }));
+                    return;
+                }
+
+
+
+                // --- handle chat messages ---
+                if (data.type === "message") {
+                    const session = userSessions.get(ws.sessionId);
+                    if (!session) throw new Error("Session not found");
+
+                    await handleUserMessage(ws.sessionId, data, session.chatHistory);
+                }
+
+                if (data.type === "clear_history") {
+                    const session = userSessions.get(ws.sessionId);
+                    if (session) session.chatHistory.length = 0;
+
+                    ws.send(JSON.stringify({
+                        type: 'history_cleared',
+                        message: 'Chat history cleared'
+                    }));
                 }
 
 
@@ -97,6 +131,8 @@ function configureWebsockets(server) {
 
 
 
+
+
     async function handleUserMessage(sessionId, data, chatHistory) {
         const session = userSessions.get(sessionId);
         if (!session || session.isProcessing) return;
@@ -107,33 +143,32 @@ function configureWebsockets(server) {
 
 
         try {
+
             // Add user msg and update chathistory
             chatHistory.push({
                 role: 'user',
                 parts: [{ text: userMessage }]
             });
 
+            // trim old messages
+            if (session.chatHistory.length > MAX_HISTORY) {
+                session.chatHistory.shift(); // remove oldest 1
+                session.chatHistory.shift(); // remove oldest 2
+            }
+
 
             // add new message in database
-
             const newMessage = await saveMessage({
                 user_id: data.userId,
                 user_name: "NA",
                 session_id: sessionId,
                 role: "user",
-                message_text: userMessage
+                message_text: userMessage,
+                url: data.url || null
             });
 
 
-            console.log("Saved:", newMessage);
-
-
-            // // Send typing indicator
-            // ws.send(JSON.stringify({
-            //     type: 'typing_start',
-            //     message: 'AI is thinking...'
-            // }));
-
+            // console.log("Saved:", newMessage);
 
 
             // Generate response with streaming
@@ -167,7 +202,7 @@ function configureWebsockets(server) {
                     });
 
 
-                    console.log("Saved:", newMessage);
+                    // console.log("Saved:", newMessage);
 
 
                     ws.send(JSON.stringify({
@@ -220,6 +255,7 @@ function configureWebsockets(server) {
         fs.writeFileSync(tempPath, buffer);
 
 
+
         try {
 
             // 2. Prepare FormData
@@ -228,30 +264,49 @@ function configureWebsockets(server) {
 
             // 3. Call your existing /upload route
             const response = await axios.post("https://chat-bot-production-b1e8.up.railway.app/upload", form, {
+            // const response = await axios.post("http://localhost:8080/upload", form, {
                 headers: form.getHeaders(),
             });
 
 
             // 4. Get URL from response and text from speech
-            const url = "thire is no url";
-            // const { url } = response.data;
-            console.log('URL index > configurew.. > hanleUserVoice :', url)
-
-            // todo: before sending back url 
-            // todo: need to call speech to text 
-            // todo: and forward to handleUserMessage
-
-
+            const { url } = response.data;
+            
+            
             // 4. Cleanup temp file
             fs.unlinkSync(tempPath);
 
+            session.isProcessing = false;
+            
+            // Create message object
+            const data = {
+                type: 'message',
+                message: "reply me back : ",
+                userId: userId,
+                url: url
+            };
+    
             // 5. Send URL back to WebSocket client
-            ws.send(JSON.stringify({ type: "audio_url", url, message: "text from speech will be provided as soon as posible" }));
-
+            ws.send(JSON.stringify({ type: "audio_url", url : url, message: "text from speech will be provided as soon as posible" }));
+            
+            
+            //send to gemini for voice reply
+            await handleUserMessage(sessionId, data, chatHistory)
+            
+            
+            
+                        // todo: before sending back url 
+                        // todo: need to call speech to text 
+                        // todo: and forward to handleUserMessage
+            
 
         } catch (error) {
-            console.error("Error transcribing:", error.response?.data || error.message);
+
+            console.error("Error transcribing:", error.message);
+            session.isProcessing = false;
+            fs.unlinkSync(tempPath);
             throw error;
+
         }
 
     }

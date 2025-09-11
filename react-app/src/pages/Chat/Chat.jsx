@@ -1,12 +1,16 @@
-import Header from "../../components/Header"
+import { useState } from "react";
+import Sidebar from "../../components/Sidebar";
 import ChatPanel from "./ChatPanel";
 
 export default function Chat() {
-  return (
-    <div className=".fullscreen w-full">
-      <Header />
-      <ChatPanel />
+  
+  const [selectedSessionId, setSelectedSessionId] = useState(false);
 
+  return (
+    <div className=".fullscreen w-full flex ">
+      <Sidebar  selectedSessionId={selectedSessionId} setSelectedSessionId={setSelectedSessionId}/>
+      <ChatPanel selectedSessionId={selectedSessionId} />
+      
     </div>
   );
 }

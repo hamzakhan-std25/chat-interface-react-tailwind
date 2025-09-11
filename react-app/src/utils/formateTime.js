@@ -7,8 +7,16 @@
     return timeString;
 }
 
+function formatDate(isoString) {
+  const date = new Date(isoString);
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
 
 
-export default formateTime;
+export  {formateTime, formatDate};
 
 // time formater
