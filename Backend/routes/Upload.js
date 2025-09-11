@@ -16,6 +16,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+// ✅ check status using get request
+router.get('/', (req, res) => {
+  console.log('upload call as get request... ')
+  res.status(200).json({ message: "upload rount is working and post request will process..." })
+});
 
 // ✅ check status using get request
 router.get('/', (req, res) => {

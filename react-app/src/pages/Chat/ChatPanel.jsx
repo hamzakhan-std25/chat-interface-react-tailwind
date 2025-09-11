@@ -2,9 +2,17 @@ import { useState, useRef, useEffect } from 'react';
 import ChatMessage from './ChatMessage';
 import { FiArrowUp, FiMic } from 'react-icons/fi';
 import VoiceRecorderModal from './VoiceRecorderModal';
+import { useAuth } from '../../contexts/authContext'
 // import './ChatBot.css'
 
-const ChatPanel = () => {
+const ChatPanel = (
+  {
+    selectedSessionId
+
+  }
+
+) => {
+
   const [isRecording, setIsRecording] = useState(false);
   const [mode, setMode] = useState('record');
   const [textToSpeech, setTextToSpeech] = useState('');
@@ -12,9 +20,11 @@ const ChatPanel = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const userId = "221";
   const ws = useRef(null);
   const messagesEndRef = useRef(null);
+  const { user } = useAuth();
+  // guard in case auth is still loading or user is null
+  const userId = user?.uid ?? null;
 
 
 
@@ -27,6 +37,56 @@ const ChatPanel = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+
+
+  function loadMessages() {
+    setIsLoading(true);
+    setMessages([]);
+    if (selectedSessionId) {
+      fetch(`https://chat-bot-production-b1e8.up.railway.app/chats/getMessages/${selectedSessionId}`)
+        .then(res => res.json())
+        .then(data => {
+
+
+          // ✅ Map Supabase rows → your custom object format (safer defaults)
+          const mappedMessages = (data.response || []).map((msg, idx) => ({
+            id: msg.id ?? `${msg.created_at ?? Date.now()}-${idx}`,
+            sender: msg.role === 'ai' ? 'Assistant' : 'You',
+            text: msg.message_text || msg.chunk || "",
+            url: msg.url ?? null,
+            isCompleted: msg.isCompleted ?? true,
+            type: msg.role === 'ai' ? 'assistant' : 'user',
+            liked: msg.liked ?? false,
+            disLiked: msg.disLiked ?? false,
+            timestamp: msg.created_at ? new Date(msg.created_at).toISOString() : new Date().toISOString(),
+          }));
+
+          // console.log('Messages loaded for session:', selectedSessionId, data.response);
+          // console.log('Mapped Messages:', mappedMessages);
+
+          setMessages(mappedMessages);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error("Error loading messages:", error);
+          setIsLoading(false);
+        });
+
+    } else {
+      setMessages([]);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadMessages();
+  }, [selectedSessionId]);
+
+
+
+
+
 
 
 
@@ -43,7 +103,13 @@ const ChatPanel = () => {
 
     ws.current.onopen = () => {
       console.log('Connected to WebSocket server!');
-      setIsConnected(true)
+      setIsConnected(true);
+
+      ws.current.send(JSON.stringify({
+        type: "init",
+        sessionId: selectedSessionId || null   // null = new session
+      }));
+
       // addMessage({sender: 'System', chunk: 'Connected to chat server !', type:'system', isCompleted : true, timestamp : Date.now()})
     };
 
@@ -52,8 +118,8 @@ const ChatPanel = () => {
       try {
         const data = JSON.parse(event.data);
 
-        console.log('data is receved from server :');
-        console.log(data);
+        // console.log('data is receved from server :');
+        // console.log(data);
 
 
 
@@ -72,9 +138,8 @@ const ChatPanel = () => {
               return [...prev.slice(0, -1), updatedlast];
             })
 
-            console.log('voice uploaded to cloudinary:  ✅ ')
+            // console.log('voice uploaded to cloudinary:  ✅ ')
           }
-
 
 
         }
@@ -109,7 +174,7 @@ const ChatPanel = () => {
       }
     };
 
-  }, []);
+  }, [selectedSessionId]);
 
   const addMessage = (data) => {
 
@@ -126,6 +191,8 @@ const ChatPanel = () => {
           url: data.url,
           isCompleted: data.isCompleted,
           type: data.type,
+          liked: data.liked || false,
+          disLiked: data.disLiked || false,
           timestamp: data.timestamp,
         }]
 
@@ -155,56 +222,68 @@ const ChatPanel = () => {
 
 
   const sendMessage = () => {
+    // guard early if conditions not met
+    if (
+      !inputMessage.trim() ||
+      !ws.current ||
+      !isConnected ||
+      isLoading ||
+      ws.current.readyState !== WebSocket.OPEN
+    ) return;
 
-    if (inputMessage.trim() && ws.current && isConnected && !isLoading) {
-      // Create message object
-      const messageData = {
-        type: 'message',
-        message: inputMessage.trim(),
-        userId: userId,
-      };
+    // Create message object
+    const messageData = {
+      type: 'message',
+      message: inputMessage.trim(),
+      userId: userId,
+    };
 
-
-
-
-      // Send message through WebSocket
+    // Send message through WebSocket (guarded)
+    try {
       ws.current.send(JSON.stringify(messageData));
-
-      // Add message to local state immediately for instant feedback
-      addMessage(
-        { sender: 'You', chunk: inputMessage.trim(), type: 'user', isCompleted: true, timestamp: new Date().toISOString() }
-      );
-      setIsLoading(true)
-      // Clear input field
-      setInputMessage('');
+    } catch (err) {
+      console.error('WebSocket send error:', err);
+      setIsLoading(false);
     }
+
+    // Add message to local state immediately for instant feedback
+    addMessage({ sender: 'You', chunk: inputMessage.trim(), type: 'user', isCompleted: true, timestamp: new Date().toISOString() });
+    setIsLoading(true);
+    // Clear input field
+    setInputMessage('');
   };
 
-
-
   const sendVoice = async (blob) => {
-    setIsLoading(true)
+    setIsLoading(true);
 
-    const url = URL.createObjectURL(blob)
-    // First add voice to sending msg instantly 
+    const url = URL.createObjectURL(blob);
+    // First add voice to sending msg instantly
     addMessage({ sender: 'You', type: 'user', url: url, isCompleted: true, timestamp: new Date().toISOString() });
 
     // create binary data
     const arrayBuffer = await blob.arrayBuffer();
     const sizeInKB = (arrayBuffer.byteLength / 1024).toFixed(2);
 
-    // Send binary on websocket
-    ws.current.send(arrayBuffer);
-    console.log(`Audio sent: ${arrayBuffer.byteLength} bytes! : (${sizeInKB} KB) ✅`);
+    // Send binary on websocket (only when open)
+    try {
+      if (ws.current && isConnected && ws.current.readyState === WebSocket.OPEN) {
+        ws.current.send(arrayBuffer);
+        // console.log(`Audio sent: ${arrayBuffer.byteLength} bytes! : (${sizeInKB} KB) ✅`);
+      } else {
+        console.error('WebSocket is not open. Cannot send audio.');
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.error('Error sending audio over WebSocket:', err);
+      setIsLoading(false);
+    }
 
   };
 
 
 
-
-
-
-  const handleKeyPress = (e) => {
+  // prefer onKeyDown for reliable Enter detection
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -285,7 +364,7 @@ const ChatPanel = () => {
             <textarea
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown}
               placeholder="Type your message here... (Press Enter to send)"
               disabled={!isConnected}
               rows={3}
