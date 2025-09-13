@@ -174,7 +174,7 @@ export default function LandingPage() {
             Back to Home
           </Link>
           <a
-            href="https://github.com/your-repo"
+            href="https://github.com/hamzakhan-std25/chat-interface-react-tailwind"
             target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
