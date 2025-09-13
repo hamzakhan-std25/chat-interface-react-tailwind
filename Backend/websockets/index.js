@@ -63,7 +63,7 @@ function configureWebsockets(server) {
 
                 // --- init handshake ---
                 if (data.type === "init") {
-                    console.log('init send:', data.sessionId)
+                    // console.log('init send:', data.sessionId)
                     userId = data.userId || 'anonymous';
                     sessionId = data.sessionId;
 
@@ -220,10 +220,13 @@ function configureWebsockets(server) {
                 }
             );
 
+
             // print all msgs in chatHistory that sent to ai as context
-            chatHistory.forEach(element => {
-                console.log(element);
-            });
+            // chatHistory.forEach(element => {
+            //     console.log(element);
+            // });
+            
+            console.log("Total messages in context:", chatHistory.length);
 
 
         } catch (error) {
