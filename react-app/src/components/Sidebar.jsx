@@ -37,7 +37,7 @@ export default function Sidebar({ selectedSessionId, setSelectedSessionId }) {
 
   useEffect(() => {
     if (userId) fetchSessions();
-  }, [userId]);
+  }, [userId, selectedSessionId]);
 
   // Close sidebar on outside click
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function Sidebar({ selectedSessionId, setSelectedSessionId }) {
       <button
         aria-label="Open Sidebar"
         onClick={() => setSideIn(true)}
-        className="fixed top-1/2 -left-2 z-40 h-12 w-6 flex items-center justify-center rounded-r-2xl bg-indigo-400 text-white shadow-md hover:bg-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-600 lg:hidden"
+        className="fixed top-1/2 -left-2 z-40 h-12 w-6 flex items-center justify-center rounded-r-2xl bg-indigo-400 text-white shadow-md hover:bg-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-600 md:hidden"
       >
         &gt;
       </button>
@@ -69,7 +69,7 @@ export default function Sidebar({ selectedSessionId, setSelectedSessionId }) {
       <div
         aria-hidden={!sideIn}
         onClick={() => setSideIn(false)}
-        className={`fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 z-40 lg:hidden ${
+        className={`fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 z-40 md:hidden ${
           sideIn ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       />
@@ -80,9 +80,9 @@ export default function Sidebar({ selectedSessionId, setSelectedSessionId }) {
         role="dialog"
         aria-modal="true"
         aria-label="Chat Sessions Sidebar"
-        className={`max-w-[280px] w-full bg-gradient-to-b from-indigo-50 to-blue-100 shadow-xl flex flex-col justify-between h-screen fixed top-0 z-50 transform transition-transform duration-300 ease-in-out font-sans lg:relative ${
+        className={`max-w-[280px] w-full bg-gradient-to-b from-indigo-50 to-blue-100 shadow-xl flex flex-col justify-between h-screen fixed top-0 z-50 transform transition-transform duration-300 ease-in-out font-sans md:relative ${
           sideIn ? 'translate-x-0 left-0' : '-translate-x-full'
-        } lg:translate-x-0 lg:left-0`}
+        } md:translate-x-0 md:left-0`}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-300 bg-white/70 backdrop-blur">
@@ -92,7 +92,7 @@ export default function Sidebar({ selectedSessionId, setSelectedSessionId }) {
           <button
             aria-label="Close Sidebar"
             onClick={() => setSideIn(false)}
-            className="text-indigo-500 hover:text-indigo-700 transition-colors focus:outline-none lg:hidden"
+            className="text-indigo-500 hover:text-indigo-700 transition-colors focus:outline-none md:hidden"
           >
             &lt;
           </button>

@@ -3,12 +3,13 @@ import ChatMessage from './ChatMessage';
 import { FiArrowUp, FiMic } from 'react-icons/fi';
 import VoiceRecorderModal from './VoiceRecorderModal';
 import { useAuth } from '../../contexts/authContext'
+import NotificationSystem from '../../components/Notification';
 // import './ChatBot.css'
 
 const ChatPanel = (
   {
-    selectedSessionId
-
+    selectedSessionId,
+    addNotification
   }
 
 ) => {
@@ -20,24 +21,23 @@ const ChatPanel = (
   const [inputMessage, setInputMessage] = useState('');
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [reconnecting, setReconnecting] = useState(0);
   const ws = useRef(null);
   const messagesEndRef = useRef(null);
   const { user } = useAuth();
-  // guard in case auth is still loading or user is null
   const userId = user?.uid ?? null;
+  const prevCount = useRef(messages.length);
 
 
 
-  // Auto-scroll to bottom when new messages arrive
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 
-  };
-
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
-    scrollToBottom();
+    if(messages.length > prevCount.current || !messages[messages.length -1]?.isCompleted ){
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+    prevCount.current = messages.length;
   }, [messages]);
-
 
 
   function loadMessages() {
@@ -62,6 +62,7 @@ const ChatPanel = (
             timestamp: msg.created_at ? new Date(msg.created_at).toISOString() : new Date().toISOString(),
           }));
 
+
           // console.log('Messages loaded for session:', selectedSessionId, data.response);
           // console.log('Mapped Messages:', mappedMessages);
 
@@ -69,6 +70,8 @@ const ChatPanel = (
           setIsLoading(false);
         })
         .catch(error => {
+          
+          addNotification('Error loading messages!')  
           console.error("Error loading messages:", error);
           setIsLoading(false);
         });
@@ -103,6 +106,7 @@ const ChatPanel = (
 
     ws.current.onopen = () => {
       console.log('Connected to WebSocket server!');
+      addNotification("Connected to chat server !");
       setIsConnected(true);
 
       ws.current.send(JSON.stringify({
@@ -155,6 +159,10 @@ const ChatPanel = (
     ws.current.onclose = () => {
       console.log('Disconnected from WebSocket server');
       setIsConnected(false);
+      setIsLoading(false);
+
+      addNotification('Disconnected from WebSocket server')
+ 
 
       // addMessage({sender: 'System', chunk: 'Disconnected from server. Trying to reconnect...', type:'system', isCompleted : true, timestamp : Date.now()});
     };
@@ -162,6 +170,11 @@ const ChatPanel = (
 
     ws.current.onerror = (error) => {
       console.error('WebSocket error:', error);
+      addNotification("WebSocket error occurred. Check console.");
+      setIsConnected(false);
+      setIsLoading(false);
+      // Optionally, you can close the socket on error
+      // ws.current.close();
       // addMessage({sender: 'System', chunk: 'Connection error occurred', type:'error', isCompleted : true, timestamp : Date.now()});
 
     };
@@ -174,12 +187,9 @@ const ChatPanel = (
       }
     };
 
-  }, [selectedSessionId]);
+  }, [selectedSessionId,reconnecting]);
 
   const addMessage = (data) => {
-
-
-
     setMessages((prev) => {
 
       if (prev.length == 0 || prev[prev.length - 1].isCompleted) {
@@ -291,10 +301,12 @@ const ChatPanel = (
   };
 
   const reconnect = () => {
+    console.log('Attempting to reconnect...');
     if (ws.current) {
       ws.current.close();
       // The useEffect will automatically try to reconnect
     }
+    setReconnecting(prev => prev + 1);
   };
 
 
@@ -313,8 +325,11 @@ const ChatPanel = (
     <>
       <div className="flex flex-col h-screen mx-auto w-full border border-gray-200 overflow-hidden bg-white shadow-lg">
         {/* Chat Header */}
-        <div className="px-2 pl-4 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex justify-between items-center h-20">
-          <h3 className="text-lg font-semibold px-2">Chat with Gemini</h3>
+        <div className="px-2 pl-4 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex justify-between items-center h-fit">
+         <div>
+           <h3 className="text-lg font-semibold px-2">Chat with AI</h3>
+          <p className="text-sm text-white mt-2">Designed & Built by <code>Hamza khan</code></p>
+         </div>
           <div className="flex items-center gap-2 mr-2">
             <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400 ring-2 ring-green-400/30' : 'bg-red-400 ring-2 ring-red-400/30'}`}></span>
             <span className="text-sm">{isConnected ? 'Connected' : 'Disconnected'}</span>
@@ -339,7 +354,12 @@ const ChatPanel = (
           ) : (
             <div className="space-y-3">
               {messages.map((message) => (
-                <ChatMessage key={message.id} message={message} speak={() => setIsRecording(true)} changeMode={() => setMode('speech')} setText={(txt) => setTextToSpeech(txt)} />
+                <ChatMessage key={message.id} message={message} 
+                speak={() => setIsRecording(true)} 
+                changeMode={() => setMode('speech')} 
+                setText={(txt) => setTextToSpeech(txt)} 
+                addNotification={addNotification}
+                setMessages={setMessages} />
               ))}
             </div>
           )}

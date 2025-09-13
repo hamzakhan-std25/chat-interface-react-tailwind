@@ -1,11 +1,19 @@
-
-import {formateTime} from '../../utils/formateTime';
+import { formateTime } from '../../utils/formateTime';
 import ReactMarkdown from 'react-markdown'
 import './chat.css'
-import { FiCopy, FiHeadphones, FiLoader, FiSpeaker, FiThumbsDown, FiThumbsUp, FiVolume2 } from 'react-icons/fi';
+import { FiCopy, FiHeadphones, FiLoader, FiPenTool, FiPercent, FiSpeaker, FiThumbsDown, FiThumbsUp, FiVolume2 } from 'react-icons/fi';
+import { Pencil } from 'lucide-react';
 
-export default function ChatMessage({ message, speak, changeMode, setText }) {
 
+export default function ChatMessage(
+    { message,
+        speak,
+        changeMode,
+        setText,
+        setMessages,
+        addNotification
+    }
+) {
 
     // Helper function to get message styling based on type
     const getMessageStyles = (type) => {
@@ -27,18 +35,29 @@ export default function ChatMessage({ message, speak, changeMode, setText }) {
 
         try {
             await navigator.clipboard.writeText(text);
-            alert('Copied!');
+            addNotification("Copied to clipboard")
         } catch (err) {
-            alert('Failed to copy!');
-            console.error('Failed to copy text: ', err);
+            addNotification("Failed to copy!")
         }
 
     }
+
     const handleThumbsUp = (id) => {
-        console.log("thumbsUp click on chat that have id :", id);
+        setMessages(prevMessages => prevMessages.map(msg => {
+            if (msg.id === id) {
+                return { ...msg, liked: !msg.liked }; // Toggle thumbsUp and reset thumbsDown
+            }
+            return msg;
+        }));
     }
     const handleThumbsDown = (id) => {
-        console.log("thumbsDown click on chat that have id :", id);
+
+        setMessages(prevMessages => prevMessages.map(msg => {
+            if (msg.id === id) {
+                return { ...msg, disliked: !msg.disliked }; // Toggle thumbsDown 
+            }
+            return msg;
+        }));
     }
 
     const speakText = (text) => {
@@ -67,8 +86,45 @@ export default function ChatMessage({ message, speak, changeMode, setText }) {
                             {message.text}
                         </ReactMarkdown>
                 }
-                <div className='flex items-center pt-2 gap-2 [&>*]:cursor-pointer'>{message.isCompleted ? <> {message.text && <FiCopy onClick={() => handleCopy(message.text)} />}  <FiThumbsUp onClick={() => handleThumbsUp(message.id)} /> <FiThumbsDown onClick={() => handleThumbsDown(message.id)} /> {message.text && <FiVolume2 onClick={() => speakText(message.text)} />} </> : <FiLoader />} </div>
+                <div className='flex items-center pt-2 gap-2 [&>*]:cursor-pointer'>
+                    {message.isCompleted ?
+                        <> {message.text &&
+                            <FiCopy
+                                className='active:text-blue-500'
+                                onClick={() => handleCopy(message.text)}
+                            />}
+                            {  message.sender == "Assistant"  &&
+
+                                <>
+
+                                   { !message.disliked &&
+                                     <FiThumbsUp className={message.liked ? 'text-blue-500' : ''}
+                                        onClick={() => handleThumbsUp(message.id)}
+                                    />
+                                   }
+                                   { !message.liked &&
+                                    <FiThumbsDown className={message.disliked ? 'text-blue-500' : ''}
+                                        onClick={() => handleThumbsDown(message.id)}
+                                    />}
+                                    {message.text &&
+                                        <FiVolume2
+                                            onClick={() => speakText(message.text)}
+                                        />}
+
+
+                                </>
+                            }
+
+
+                            {message.type == 'user' &&
+                                <Pencil onClick={() => addNotification("Can't Edit right now!")}
+                                    className=' w-4 h-4 active:text-blue-500' />}
+
+                        </> :
+                        <FiLoader
+                        />} </div>
             </div>
+
 
         </div>
     )
