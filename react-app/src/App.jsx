@@ -5,27 +5,43 @@ import Signup from "./pages/SignUp/SignUp";
 import Chat from "./pages/Chat/Chat";
 import About from "./pages/About/About"
 import PrivateRoute from "./components/PrivateRoute";
+import { useState } from "react";
+import NotificationSystem from "./components/NotificationSystem";
+
 
 
 function App() {
+  const [notifications, setNotifications] = useState([]);
+
+  function addNotification(msg) {
+    // console.log("Adding notification:", msg);
+    const id = Date.now();
+    setNotifications((prev) => [...prev, { id, message: msg }]);
+    console.log(notifications)
+  }
+
+
+
+
   return (
 
     // <About />
 
     <Router>
+        <NotificationSystem notifications={notifications} setNotifications={setNotifications} /> 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route 
-          path="/chat" 
+        <Route
+          path="/chat"
           element={
             <PrivateRoute>
-              <Chat />
+              <Chat  addNotification={addNotification} />
             </PrivateRoute>
-          } 
+          }
         />
-        <Route path="/about" element={<About /> } />
+        <Route path="/about" element={<About />} />
       </Routes>
     </Router>
 
