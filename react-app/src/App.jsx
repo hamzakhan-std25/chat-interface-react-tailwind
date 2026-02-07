@@ -28,7 +28,7 @@ function App() {
 
 
       <Router>
-        <Toaster position="top-right" />  {/* This displays the notes */}
+        <Toaster position="top-center" />  {/* This displays the notes */}
         <NotificationBar />
         <NotificationSystem notifications={notifications} setNotifications={setNotifications} />
         <Routes>

@@ -64,14 +64,14 @@ export default function Login() {
         toast.error(userMessage);
         // setErrorMessage(userMessage); // If using React state
       }
-
-
-
+      
+      
+      
       navigate('/');
-
+      
     }
   };
-
+  
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
@@ -81,7 +81,7 @@ export default function Login() {
       </div>
     );
   }
-
+  
   return (
     <div className="flex justify-center pt-2 items-center min-h-[calc(100vh-40px)] bg-gradient-to-br from-indigo-100 via-purple-100 to-violet-200 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg px-8 py-4">
@@ -103,7 +103,7 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             requireds="true"
-          />
+            />
 
           <label className="block text-gray-700 font-medium mb-1">Password</label>
           <input
@@ -115,13 +115,13 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             requireds="true"
-          />
+            />
 
           {/* CTA Button */}
           <button
             type="submit"
             className="w-full py-2 rounded-lg bg-indigo-500 text-white font-semibold shadow-md hover:bg-indigo-600 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-          >
+            >
             Log In
           </button>
         </form>
@@ -138,31 +138,31 @@ export default function Login() {
           <button
             onClick={loginWithGoogle}
             className="flex items-center justify-center gap-3 px-6 py-3 text-gray-700 font-medium border border-gray-300 rounded-lg bg-white shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 active:scale-95"
-          >
+            >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
               alt="Google"
               className="w-5 h-5"
-            />
+              />
             <span>Continue with Google</span>
           </button>
 
           <button
             onClick={loginWithGithub}
             className="flex items-center justify-center gap-3 px-6 py-3 text-gray-700 font-medium border border-gray-300 rounded-lg bg-white shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 active:scale-95"
-          >
+            >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
               className="w-5 h-5"
-            >
+              >
               <path
                 fillRule="evenodd"
                 d="M12 0C5.37 0 0 5.52 0 12.34c0 5.45 3.44 10.07 8.21 11.7.6.11.82-.27.82-.6 
-              0-.3-.01-1.1-.02-2.16-3.34.74-4.04-1.66-4.04-1.66-.55-1.43-1.34-1.81-1.34-1.81-1.1-.77.08-.76.08-.76 
-              1.22.09 1.87 1.28 1.87 1.28 1.08 1.9 2.84 1.35 3.54 1.03.11-.81.42-1.35.77-1.66-2.67-.31-5.48-1.38-5.48-6.16 
-              0-1.36.46-2.48 1.23-3.35-.12-.31-.53-1.57.12-3.27 0 0 1.01-.33 3.3 1.28a11.2 11.2 0 0 1 6 0c2.3-1.61 3.3-1.28 
+                0-.3-.01-1.1-.02-2.16-3.34.74-4.04-1.66-4.04-1.66-.55-1.43-1.34-1.81-1.34-1.81-1.1-.77.08-.76.08-.76 
+                1.22.09 1.87 1.28 1.87 1.28 1.08 1.9 2.84 1.35 3.54 1.03.11-.81.42-1.35.77-1.66-2.67-.31-5.48-1.38-5.48-6.16 
+                0-1.36.46-2.48 1.23-3.35-.12-.31-.53-1.57.12-3.27 0 0 1.01-.33 3.3 1.28a11.2 11.2 0 0 1 6 0c2.3-1.61 3.3-1.28 
               3.3-1.28.65 1.7.24 2.96.12 3.27.77.87 1.23 1.99 1.23 3.35 0 4.79-2.81 5.84-5.49 6.15.43.38.82 1.12.82 2.26 
               0 1.64-.02 2.96-.02 3.37 0 .33.22.72.83.6C20.56 22.4 24 17.78 24 12.34 24 5.52 18.63 0 12 0z"
               />
