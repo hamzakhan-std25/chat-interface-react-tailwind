@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { register } from "../../Services/authServices";
 import { useNavigate, Link } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [conPassword, setConPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
@@ -43,7 +46,7 @@ export default function Signup() {
           />
 
           <label className="block text-gray-700 font-medium mb-1">Password</label>
-          <input
+          {/* <input
             className="w-full px-4 py-2 mb-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
             type="password"
             name="new-password"
@@ -53,29 +56,69 @@ export default function Signup() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-          />
+          /> */}
+
+          <div className="relative w-full max-w-sm">
+            <input
+              // Switch type based on showPassword state
+              type={showPassword ? "text" : "password"}
+              className="w-full px-4 py-2 pr-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
+              placeholder="********"
+              name="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            {/* Toggle Button */}
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-600 hover:text-indigo-500"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+            </button>
+          </div>
 
 
           <label className="block text-gray-700 font-medium mb-1">Confirm Password</label>
-          <input
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
-            type="password"
-            name="new-password"
-            id="password"
-            autoComplete="new-password" // Tells browser "this is the saved password"
-            placeholder="********"
-            value={conPassword}
-            onChange={(e) => {
-              setConPassword(e.target.value)
-              if (e.target.value !== password) {
-                e.target.setCustomValidity("Passwords do not match");
-              } else {
-                e.target.setCustomValidity("");
+
+          <div className="relative w-full max-w-sm">
+            <input
+              // Switch type based on showPassword state
+              type={showPassword2 ? "text" : "password"}
+              className="w-full px-4 py-2 pr-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
+              name="new-password"
+              id="password"
+              autoComplete="new-password" // Tells browser "this is the saved password"
+              placeholder="********"
+              value={conPassword}
+              onChange={(e) => {
+                setConPassword(e.target.value)
+                if (e.target.value !== password) {
+                  e.target.setCustomValidity("Passwords do not match");
+                } else {
+                  e.target.setCustomValidity("");
+                }
               }
-            }
-            }
-            required
-          />
+              }
+              required
+            />
+
+            {/* Toggle Button */}
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-600 hover:text-indigo-500"
+              onClick={() => setShowPassword2(!showPassword2)}
+              aria-label={showPassword2 ? "Hide password" : "Show password"}
+            >
+              {showPassword2 ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+            </button>
+          </div>
+
+
 
           {/* CTA Button */}
           <button

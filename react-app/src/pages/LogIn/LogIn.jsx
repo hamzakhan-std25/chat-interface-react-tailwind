@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { login, loginWithGoogle, loginWithGithub } from "../../Services/authServices";
 import { useNavigate, Link } from "react-router-dom";
 import { auth } from "../../firebase";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { toast } from 'react-hot-toast';
@@ -10,6 +11,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
 
@@ -23,8 +25,8 @@ export default function Login() {
         }
       })
       .catch((error) => {
-        console.error("Auth Error:",error.message);
-        toast.error("Auth failed! " );
+        console.error("Auth Error:", error.message);
+        toast.error("Auth failed! ");
       });
 
     // Keep your existing listener as a backup
@@ -118,7 +120,7 @@ export default function Login() {
           />
 
           <label className="block text-gray-700 font-medium mb-1">Password</label>
-          <input
+          {/* <input
             className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
             type="password"
             placeholder="********"
@@ -127,7 +129,31 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             requireds="true"
-          />
+          /> */}
+
+          <div className="relative w-full max-w-sm">
+            <input
+              // Switch type based on showPassword state
+              type={showPassword ? "text" : "password"}
+              className="w-full px-4 py-2 pr-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
+              placeholder="********"
+              name="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            {/* Toggle Button */}
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-600 hover:text-indigo-500"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+            </button>
+          </div>
 
           {/* CTA Button */}
           <button

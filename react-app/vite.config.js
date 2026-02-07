@@ -47,10 +47,11 @@ export default defineConfig({
         ]
       },
       workbox: {
-       // This is the magic line:
-        navigateFallback: '/index.html',
-        // Optional: Ensure specific files aren't intercepted
+        // 1. Ensure the file is included in the static assets cache
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+
+        // 2. Set the fallback page for navigation requests
+        navigateFallback: '/offline.html',
 
         runtimeCaching: [
           {
