@@ -70,6 +70,11 @@ Thumbs.db
 # react-app/
 # frontend/
 
+# Push ONLY the Backend folder and Dockerfile to Hugging Face
+# This bypasses the large images in your other folders
+# -----------------------------------------------------
+# git push space `git subtree split --prefix Backend main`:main --force
+
 
 
 
