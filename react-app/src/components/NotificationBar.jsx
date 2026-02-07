@@ -7,8 +7,8 @@ const NotificationBar = () => {
 
   // Optimized messages
   const message = location.pathname === '/' || '/login'
-    ? "🚀 Quick Access: You can use a dummy email to register and test the chatbot!"
-    : "✨ No registration required? Use a dummy email to sign up and try our chatbot instantly!";
+    ? "-- 🚀 Quick Access: You can use a dummy email to register and test the chatbot!"
+    : "-- ✨ No registration required? Use a dummy email to sign up and try our chatbot instantly!";
 
   const showBar = ['/', '/signup','/login'].includes(location.pathname);
   if (!showBar) return null;
