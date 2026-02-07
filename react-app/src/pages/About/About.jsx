@@ -8,7 +8,7 @@ import hero2 from '../../assets/images/splash2.jpg';
 import hero3 from '../../assets/images/splash3.jpg';
 import hero4 from '../../assets/images/splash4.jpg';
 
-import chat_interface from '../../assets/images/chat-interface.png';
+import chat_interface from '../../assets/images/Chat-interface.png';
 import about from '../../assets/images/exp.jpg';
 
 
