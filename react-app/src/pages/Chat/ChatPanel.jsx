@@ -422,7 +422,7 @@ const ChatPanel = (
               onChange={(e) => setInputMessage(e.target.value)}
               onInput={(e) => { e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px'; }}
               onKeyDown={handleKeyDown}
-              placeholder="Type your message... Enter or Ctrl/Cmd+Enter to send, Shift+Enter for newline"
+              placeholder="Type your message..."
               disabled={!isConnected}
               rows={3}
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
