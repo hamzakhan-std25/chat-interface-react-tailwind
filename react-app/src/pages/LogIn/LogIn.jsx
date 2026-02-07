@@ -26,12 +26,15 @@ export default function Login() {
       })
       .catch((error) => {
         console.error("Auth Error:", error.message);
-        toast.error("Auth failed! ");
+        toast.error("Auth failed!");
       });
 
     // Keep your existing listener as a backup
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) navigate('/chat');
+      if (user){
+        toast.success("Welcome back!");
+        navigate('/chat');
+      } 
       setLoading(false);
     });
 
@@ -47,43 +50,36 @@ export default function Login() {
       toast.success('Welcome back!');
       navigate("/chat");
     } catch (err) {
+      // 1. Extract the code
+      const errorCode = err.code;
 
-      try {
-        await login(email, password);
-      } catch (err) {
-        // 1. Extract the code
-        const errorCode = err.code;
+      // 2. Logic to determine the message
+      let userMessage;
 
-        // 2. Logic to determine the message
-        let userMessage;
-
-        if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/invalid-email') {
-          // This handles wrong email, wrong password, or badly formatted email
-          userMessage = "Invalid credentials!";
-        }
-        else if (errorCode === 'auth/network-request-failed' || errorCode === 'auth/internal-error') {
-          // This handles internet issues or Firebase server issues
-          userMessage = "Server is not responding!";
-        }
-        else if (errorCode === 'auth/too-many-requests') {
-          // This handles the specific error you saw in your console
-          userMessage = "Too many failed attempts!";
-        }
-        else {
-          // Fallback for anything else
-          userMessage = "An unexpected error occurred!";
-        }
-
-        // 3. Show the message in your UI
-        toast.error(userMessage);
-        // setErrorMessage(userMessage); // If using React state
+      if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/invalid-email') {
+        // This handles wrong email, wrong password, or badly formatted email
+        userMessage = "Invalid credentials!";
+      }
+      else if (errorCode === 'auth/network-request-failed' || errorCode === 'auth/internal-error') {
+        // This handles internet issues or Firebase server issues
+        userMessage = "Server is not responding!";
+      }
+      else if (errorCode === 'auth/too-many-requests') {
+        // This handles the specific error you saw in your console
+        userMessage = "Too many failed attempts!";
+      }
+      else {
+        // Fallback for anything else
+        userMessage = "An unexpected error occurred!";
       }
 
-
-
-      navigate('/');
-
+      // 3. Show the message in your UI
+      toast.error(userMessage);
+      // setErrorMessage(userMessage); // If using React state
     }
+    navigate('/');
+
+
   };
 
   if (loading) {
@@ -120,16 +116,7 @@ export default function Login() {
           />
 
           <label className="block text-gray-700 font-medium mb-1">Password</label>
-          {/* <input
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
-            type="password"
-            placeholder="********"
-            name="password" // Important for browser recognition
-            autoComplete="current-password" // Specifically tells Google this is a stored password
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            requireds="true"
-          /> */}
+
 
           <div className="relative w-full max-w-sm">
             <input
