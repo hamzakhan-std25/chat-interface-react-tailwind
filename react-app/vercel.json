@@ -1,9 +1,6 @@
 {
   "rewrites": [
-    {
-      "source": "/__/auth/:path*",
-      "destination": "https://chat-bot-hm.firebaseapp.com*"
-    },
+
     {
       "source": "/(.*)",
       "destination": "/index.html"
