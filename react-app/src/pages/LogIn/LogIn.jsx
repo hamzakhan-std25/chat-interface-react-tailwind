@@ -4,6 +4,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from "../../firebase";
 
+import { toast } from 'react-hot-toast';
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,10 +30,45 @@ export default function Login() {
     e.preventDefault();
     try {
       await login(email, password);
+      toast.success('Welcome back!');
       navigate("/chat");
     } catch (err) {
+
+      try {
+        await login(email, password);
+      } catch (err) {
+        // 1. Extract the code
+        const errorCode = err.code;
+
+        // 2. Logic to determine the message
+        let userMessage;
+
+        if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/invalid-email') {
+          // This handles wrong email, wrong password, or badly formatted email
+          userMessage = "Invalid credentials!";
+        }
+        else if (errorCode === 'auth/network-request-failed' || errorCode === 'auth/internal-error') {
+          // This handles internet issues or Firebase server issues
+          userMessage = "Server is not responding!";
+        }
+        else if (errorCode === 'auth/too-many-requests') {
+          // This handles the specific error you saw in your console
+          userMessage = "Too many failed attempts!";
+        }
+        else {
+          // Fallback for anything else
+          userMessage = "An unexpected error occurred!";
+        }
+
+        // 3. Show the message in your UI
+        toast.error(userMessage);
+        // setErrorMessage(userMessage); // If using React state
+      }
+
+
+
       navigate('/');
-      alert(err.message);
+
     }
   };
 
@@ -56,29 +93,29 @@ export default function Login() {
 
         {/* Form */}
         <form onSubmit={handleLogin} className="flex flex-col gap-4 ">
-            <label className="block text-gray-700 font-medium mb-1">Email</label>
-            <input
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
-              type="email"
-              name="email" // Important for browser recognition
-              autoComplete="username" // Helps managers link email to the account
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              requireds="true"
-            />
+          <label className="block text-gray-700 font-medium mb-1">Email</label>
+          <input
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
+            type="email"
+            name="email" // Important for browser recognition
+            autoComplete="username" // Helps managers link email to the account
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            requireds="true"
+          />
 
-            <label className="block text-gray-700 font-medium mb-1">Password</label>
-            <input
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
-              type="password"
-              placeholder="********"
-              name="password" // Important for browser recognition
-              autoComplete="current-password" // Specifically tells Google this is a stored password
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              requireds="true"
-            />
+          <label className="block text-gray-700 font-medium mb-1">Password</label>
+          <input
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
+            type="password"
+            placeholder="********"
+            name="password" // Important for browser recognition
+            autoComplete="current-password" // Specifically tells Google this is a stored password
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            requireds="true"
+          />
 
           {/* CTA Button */}
           <button

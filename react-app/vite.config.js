@@ -109,6 +109,7 @@ export default defineConfig({
       }
     })
   ],
+   base: '/',
 
 
   // Add this server configuration

@@ -8,6 +8,7 @@ import { useState } from "react";
 import NotificationSystem from "./components/NotificationSystem";
 import NotificationBar from "./components/NotificationBar";
 
+import { Toaster } from 'react-hot-toast';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
 
 
       <Router>
+        <Toaster position="top-right" />  {/* This displays the notes */}
         <NotificationBar />
         <NotificationSystem notifications={notifications} setNotifications={setNotifications} />
         <Routes>
