@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from "../../firebase";
 
+import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { toast } from 'react-hot-toast';
 
 export default function Login() {
@@ -14,16 +15,28 @@ export default function Login() {
 
 
   useEffect(() => {
+    // FORCE grab the result (Essential for Mobile Redirects)
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          toast.success("Login Successful!");
+          navigate('/chat');
+        }
+      })
+      .catch((error) => {
+        console.error("Auth Error:",error.message);
+        toast.error("Auth failed! " );
+      });
+
+    // Keep your existing listener as a backup
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // Redirect if already logged in
-        navigate('/chat');
-      }
-      // Finish loading once we know the auth status
+      if (user) navigate('/chat');
       setLoading(false);
     });
+
     return () => unsubscribe();
-  }, [navigate]);
+  }, [navigate, auth]);
+
 
 
   const handleLogin = async (e) => {
@@ -64,14 +77,14 @@ export default function Login() {
         toast.error(userMessage);
         // setErrorMessage(userMessage); // If using React state
       }
-      
-      
-      
+
+
+
       navigate('/');
-      
+
     }
   };
-  
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
@@ -81,7 +94,7 @@ export default function Login() {
       </div>
     );
   }
-  
+
   return (
     <div className="flex justify-center pt-2 items-center min-h-[calc(100vh-40px)] bg-gradient-to-br from-indigo-100 via-purple-100 to-violet-200 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg px-8 py-4">
@@ -103,7 +116,7 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             requireds="true"
-            />
+          />
 
           <label className="block text-gray-700 font-medium mb-1">Password</label>
           <input
@@ -115,13 +128,13 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             requireds="true"
-            />
+          />
 
           {/* CTA Button */}
           <button
             type="submit"
             className="w-full py-2 rounded-lg bg-indigo-500 text-white font-semibold shadow-md hover:bg-indigo-600 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-            >
+          >
             Log In
           </button>
         </form>
@@ -138,25 +151,25 @@ export default function Login() {
           <button
             onClick={loginWithGoogle}
             className="flex items-center justify-center gap-3 px-6 py-3 text-gray-700 font-medium border border-gray-300 rounded-lg bg-white shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 active:scale-95"
-            >
+          >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
               alt="Google"
               className="w-5 h-5"
-              />
+            />
             <span>Continue with Google</span>
           </button>
 
           <button
             onClick={loginWithGithub}
             className="flex items-center justify-center gap-3 px-6 py-3 text-gray-700 font-medium border border-gray-300 rounded-lg bg-white shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 active:scale-95"
-            >
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
               className="w-5 h-5"
-              >
+            >
               <path
                 fillRule="evenodd"
                 d="M12 0C5.37 0 0 5.52 0 12.34c0 5.45 3.44 10.07 8.21 11.7.6.11.82-.27.82-.6 
