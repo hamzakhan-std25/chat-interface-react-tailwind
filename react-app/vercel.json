@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/((?!api|__/auth).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
