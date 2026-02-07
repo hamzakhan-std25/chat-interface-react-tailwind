@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { login, loginWithGoogle, loginWithGithub } from "../../Services/authServices";
 import { useNavigate, Link } from "react-router-dom";
-import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from "../../firebase";
 
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
