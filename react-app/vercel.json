@@ -1,6 +1,9 @@
 {
   "rewrites": [
-
+    {
+      "source": "/__/auth/:path*",
+      "destination": "https://chat-bot-hm.web.app*"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
