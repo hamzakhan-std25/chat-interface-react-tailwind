@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari, and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge, and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+
+
+:root {
+
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+
+
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+
+/* 
+@layer base {
+  body {
+    @apply bg-white text-gray-900;
+}
+}
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 font-semibold text-sm text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline
+      focus:ring-2 focus:ring-offset-2 focus:ring-blue-500;
+  }
+  }
+@layer utilities {
+  .container {
+    @apply mx-auto px-4 sm:px-6 lg:px-8;
+  } 
+  .card {
+    @apply bg-white shadow-md rounded-lg p-6;
+  }
+  .card-header {
+    @apply text-lg font-semibold mb-4;
+  }
+  .card-body {
+    @apply text-gray-700;
+  }
+  .card-footer {
+    @apply mt-4 flex justify-end;
+  }
+  .card-footer button {
+    @apply btn;
+  }
+} */

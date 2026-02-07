@@ -28,12 +28,6 @@ build
 dist
 dist-ssr
 *.local
-whisper.cpp
-temp-*
-uploads
-whisper.cpp
-
-
 
 # Editor directories and files
 .vscode/*
@@ -52,24 +46,3 @@ whisper.cpp
 *.env.production.local
 .env.development
 .env.test
-
-# Ignore node_modules in any subfolder
-**/node_modules/
-
-# Ignore environment files
-.env
-
-# Ignore OS generated files
-.DS_Store
-Thumbs.db
-
-.qodo/
-
-# Block the folders containing the offending binary files  from huging face
-# Preview/
-# react-app/
-# frontend/
-
-
-
-
