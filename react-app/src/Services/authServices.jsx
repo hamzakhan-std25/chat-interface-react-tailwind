@@ -24,7 +24,7 @@ export function login(email, password) {
 export async function loginWithGoogle() {
   const provider = new GoogleAuthProvider();
   if (isMobile()) {
-    toast.error("google btn");
+    toast.error("google btn clicked");
     return signInWithRedirect(auth, provider);
   }
   return signInWithPopup(auth, provider);
@@ -33,7 +33,7 @@ export async function loginWithGoogle() {
 export async function loginWithGithub() {
   const provider = new GithubAuthProvider();
   if (isMobile()) {
-    toast.error("github btn");
+    toast.error("github btn clicked");
     return signInWithRedirect(auth, provider);
   }
   return await signInWithPopup(auth, provider);
