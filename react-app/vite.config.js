@@ -50,10 +50,19 @@ export default defineConfig({
         // 1. Ensure the file is included in the static assets cache
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
 
+
         // 2. Set the fallback page for navigation requests
         navigateFallback: '/offline.html',
 
+         // THE FIX: Prevent the SW from intercepting Firebase Auth paths
+        navigateFallbackDenylist: [/^\/__\/auth/],
+        // Optional: ensure other API routes also bypass the SW
+
         runtimeCaching: [
+           {
+            urlPattern: /^\/__\/auth/,
+            handler: 'NetworkOnly',
+          },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',
