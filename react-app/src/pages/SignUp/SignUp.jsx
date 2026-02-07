@@ -32,7 +32,7 @@ export default function Signup() {
 
         {/* Form */}
         <form onSubmit={handleSignup} className="flex flex-col gap-4">
-          <label className="block text-gray-700 font-medium mb-1">Email</label>
+          <label  className="block text-gray-700 font-medium mb-1">Email</label>
           <input
             className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
             type="email"
@@ -65,6 +65,7 @@ export default function Signup() {
               className="w-full px-4 py-2 pr-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
               placeholder="********"
               name="password"
+              id="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -83,7 +84,7 @@ export default function Signup() {
           </div>
 
 
-          <label className="block text-gray-700 font-medium mb-1">Confirm Password</label>
+          <label  className="block text-gray-700 font-medium mb-1">Confirm Password</label>
 
           <div className="relative w-full max-w-sm">
             <input
@@ -91,7 +92,7 @@ export default function Signup() {
               type={showPassword2 ? "text" : "password"}
               className="w-full px-4 py-2 pr-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none transition bg-gray-50"
               name="new-password"
-              id="password"
+              id="password2"
               autoComplete="new-password" // Tells browser "this is the saved password"
               placeholder="********"
               value={conPassword}
