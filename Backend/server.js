@@ -12,6 +12,6 @@ configureWebsockets(server);
 
 // REMOVE "0.0.0.0" - Let the environment handle the binding
 
-server.listen(port, '0.0.0.0', () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(' ✅ Server is running on port :', PORT)
 });

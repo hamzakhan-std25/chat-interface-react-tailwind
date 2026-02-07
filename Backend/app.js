@@ -5,7 +5,10 @@ const cors = require('cors');
 
 app.use(express.json());
 
-app.use(cors());
+app.use(cors({
+  origin: "*" // Or specific frontend URL
+}));
+
 
 // Middleware to handle raw binary data
 app.use("/upload/transcribe", express.raw({ type: "application/octet-stream", limit: "50mb" }));
