@@ -42,40 +42,32 @@ export default function Login() {
   // }, [navigate, auth]);
 
 
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const checkRedirect = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result?.user && isMounted) {
-          toast.success("Login Successful!");
-          navigate('/chat', { replace: true });
-        }
-      } catch (error) {
-        console.error("Redirect Error:", error.message);
+useEffect(() => {
+  // 1. This "grabs" the result of the redirect after the page reloads
+  getRedirectResult(auth)
+    .then((result) => {
+      if (result?.user) {
+        alert("Success! User found via Redirect");
+        navigate('/chat');
       }
-    };
-
-    checkRedirect();
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && isMounted) {
-        // Small delay helps mobile browsers "catch up" with the session
-        toast.success("Welcome back!");
-        setTimeout(() => {
-          navigate('/chat', { replace: true });
-        }, 500);
-      }
-      setLoading(false);
+    })
+    .catch((error) => {
+      // If you see an alert here, your Authorized Domains are wrong
+      alert("Redirect Error: " + error.message);
     });
 
-    return () => {
-      isMounted = false;
-      unsubscribe();
-    };
-  }, [navigate, auth]);
+  // 2. Standard listener
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (user) 
+      {
+        toast.success('Welcome back!')
+        navigate('/chat');
+      }
+    setLoading(false);
+  });
+
+  return () => unsubscribe();
+}, [navigate]);
 
 
 
