@@ -5,12 +5,13 @@ import VoiceRecorderModal from './VoiceRecorderModal';
 import { useAuth } from '../../contexts/authContext'
 import NotificationSystem from '../../components/Notification';
 import { FiRepeat } from 'react-icons/fi';
+import { toast } from 'react-hot-toast';
+
 // import './ChatBot.css'
 
 const ChatPanel = (
   {
     selectedSessionId,
-    addNotification,
     setSideIn
   }
 
@@ -51,7 +52,7 @@ const ChatPanel = (
         .then(res => res.json())
         .then(data => {
           console.log("-----------------------------------")
-          console.log("data from localhost/chats/getMessages: ", data)
+          console.log("data from .../chats/getMessages: ", data)
 
 
           // ✅ Map Supabase rows → your custom object format (safer defaults)
@@ -75,7 +76,7 @@ const ChatPanel = (
         })
         .catch(error => {
 
-          addNotification('Error msg loading!')
+          toast.error('Error msg loading!')
           console.error("Error loading messages:", error);
           setIsLoading(false);
         });
@@ -110,7 +111,7 @@ const ChatPanel = (
 
     ws.current.onopen = () => {
       console.log('Connected to WebSocket server!');
-      addNotification("Connected!");
+      toast.success("Connected!");
       setIsConnected(true);
 
       ws.current.send(JSON.stringify({
@@ -165,7 +166,7 @@ const ChatPanel = (
       setIsConnected(false);
       setIsLoading(false);
 
-      addNotification('Disconnected!')
+      toast.error('Disconnected!')
 
 
       // addMessage({sender: 'System', chunk: 'Disconnected from server. Trying to reconnect...', type:'system', isCompleted : true, timestamp : Date.now()});
@@ -174,7 +175,7 @@ const ChatPanel = (
 
     ws.current.onerror = (error) => {
       console.error('WebSocket error:', error);
-      addNotification("Ws error");
+      toast.error("Ws error");
       setIsConnected(false);
       setIsLoading(false);
       // Optionally, you can close the socket on error
@@ -393,7 +394,6 @@ const ChatPanel = (
                   speak={() => setIsRecording(true)}
                   changeMode={() => setMode('speech')}
                   setText={(txt) => setTextToSpeech(txt)}
-                  addNotification={addNotification}
                   setMessages={setMessages} />
               ))}
             </div>

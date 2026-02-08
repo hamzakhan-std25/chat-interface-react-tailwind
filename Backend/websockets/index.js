@@ -286,7 +286,7 @@ function configureWebsockets(server) {
             form.append("audio", fs.createReadStream(tempPath));
 
             // 3. Call your existing /upload route
-            const response = await axios.post("https://chatbothm-ddggvlhj.b4a.run/upload", form, {
+            const response = await axios.post("https://hamzakhan25-chat-bot-hm.hf.space/upload", form, {
             // const response = await axios.post("http://localhost:8080/upload", form, {
                 headers: form.getHeaders(),
             });

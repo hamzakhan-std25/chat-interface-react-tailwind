@@ -3,6 +3,8 @@ import ReactMarkdown from 'react-markdown'
 import './chat.css'
 import { FiCopy, FiLoader, FiThumbsDown, FiThumbsUp, FiVolume2 } from 'react-icons/fi';
 import { Pencil } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+
 
 
 export default function ChatMessage(
@@ -10,8 +12,7 @@ export default function ChatMessage(
         speak,
         changeMode,
         setText,
-        setMessages,
-        addNotification
+        setMessages
     }
 ) {
 
@@ -35,9 +36,9 @@ export default function ChatMessage(
 
         try {
             await navigator.clipboard.writeText(text);
-            addNotification("Copied!")
+            toast.success("Copied!")
         } catch (err) {
-            addNotification("Failed!")
+            toast.error("Failed!")
         }
 
     }
@@ -116,7 +117,7 @@ export default function ChatMessage(
                             )}
 
                             {message.type === 'user' && (
-                                <button aria-label="Edit message" title="Edit" onClick={() => addNotification("Can't Edit!")}>
+                                <button aria-label="Edit message" title="Edit" onClick={() => toast.error("Can't Edit!")}>
                                     <Pencil className='w-4 h-4 active:text-blue-500' />
                                 </button>
                             )}
