@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 
 
 const firebaseConfig = {
@@ -12,4 +12,11 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+const auth = getAuth(app);
+
+
+// ADD THIS: Ensure the user is saved to the device memory permanently
+setPersistence(auth, browserLocalPersistence)
+  .catch((err) => console.error("Persistence error:", err));
+
+export  { auth };

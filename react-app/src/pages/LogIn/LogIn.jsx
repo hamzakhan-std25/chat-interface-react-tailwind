@@ -15,31 +15,68 @@ export default function Login() {
   const navigate = useNavigate();
 
 
-  useEffect(() => {
-    // FORCE grab the result (Essential for Mobile Redirects)
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          toast.success("Login Successful!");
-          navigate('/chat');
-        }
-      })
-      .catch((error) => {
-        console.error("Auth Error:", error.message);
-        toast.error("Auth failed!");
-      });
+  // useEffect(() => {
+  //   // FORCE grab the result (Essential for Mobile Redirects)
+  //   getRedirectResult(auth)
+  //     .then((result) => {
+  //       if (result?.user) {
+  //         toast.success("Login Successful!");
+  //         navigate('/chat');
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Auth Error:", error.message);
+  //       toast.error("Auth failed!");
+  //     });
 
-    // Keep your existing listener as a backup
+  //   // Keep your existing listener as a backup
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user){
+  //       toast.success("Welcome back!");
+  //       navigate('/chat');
+  //     } 
+  //     setLoading(false);
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [navigate, auth]);
+
+
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const checkRedirect = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result?.user && isMounted) {
+          toast.success("Login Successful!");
+          navigate('/chat', { replace: true });
+        }
+      } catch (error) {
+        console.error("Redirect Error:", error.message);
+      }
+    };
+
+    checkRedirect();
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user){
+      if (user && isMounted) {
+        // Small delay helps mobile browsers "catch up" with the session
         toast.success("Welcome back!");
-        navigate('/chat');
-      } 
+        setTimeout(() => {
+          navigate('/chat', { replace: true });
+        }, 500);
+      }
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, [navigate, auth]);
+
 
 
 
