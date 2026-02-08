@@ -25,10 +25,8 @@ export async function loginWithGoogle() {
   const provider = new GoogleAuthProvider();
   toast.success("Google Auth");
   if (isMobile()) {
-    alert("ismobile = ture");
     return signInWithRedirect(auth, provider);
   }
-  alert("signInWhithREdirect fail || trying singInWithPopup");
   return signInWithPopup(auth, provider);
 }
 

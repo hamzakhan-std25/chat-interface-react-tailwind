@@ -47,13 +47,13 @@ useEffect(() => {
   getRedirectResult(auth)
     .then((result) => {
       if (result?.user) {
-        alert("Success! User found via Redirect");
+        toast.success("Success! User created.");
         navigate('/chat');
       }
     })
     .catch((error) => {
       // If you see an alert here, your Authorized Domains are wrong
-      alert("Redirect Error: " + error.message);
+      toast.error("Redirect Error: " + error.message);
     });
 
   // 2. Standard listener
